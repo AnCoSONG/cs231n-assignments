@@ -32,17 +32,22 @@ def svm_loss_naive(W, X, y, reg):
         correct_class_score = scores[y[i]]
         for j in range(num_classes):
             if j == y[i]:
-                continue
+                continue # loss += 0, dW += 0
             margin = scores[j] - correct_class_score + 1 # note delta = 1
             if margin > 0:
                 loss += margin
+#                 print(X[i].shape)
+                dW[:, y[i]] -= X[i]
+                dW[:, j] += X[i] # why? why couldn't be =X[i].
 
     # Right now the loss is a sum over all training examples, but we want it
     # to be an average instead so we divide by num_train.
     loss /= num_train
+    dW /= num_train # L = 1/N * ∑Li, dL/dW = dL/dLi * dLi / dW = 1/N * dLi/dW
 
     # Add regularization to the loss.
     loss += reg * np.sum(W * W)
+    dW += 2 * reg * W
 
     #############################################################################
     # TODO:                                                                     #
@@ -54,7 +59,7 @@ def svm_loss_naive(W, X, y, reg):
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
+    # "Implementation is above."
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
@@ -78,7 +83,20 @@ def svm_loss_vectorized(W, X, y, reg):
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
+    # X: (500, 3073)
+    # W: (3073, 10)
+    # y: (500,)
+    scores = np.dot(X, W) # 500,10
+    correct_scores = scores[np.arange(scores.shape[0]), y] # !trick, arr[(a,b),(c,d)] produce value of (a,c) (b,d) ..
+    correct_scores = np.reshape(correct_scores, (scores.shape[0], -1))
+#     print(scores.shape)
+#     print(correct_scores.shape)
+    margins = scores - correct_scores + 1.0
+    L = np.maximum(0, margins)
+#     print(L.shape)
+    L[np.arange(X.shape[0]), y] = 0.0 # 将j==y_i这些位置赋值为0
+    loss += np.sum(L) / X.shape[0]
+    loss += reg * np.sum(W * W)
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -92,9 +110,18 @@ def svm_loss_vectorized(W, X, y, reg):
     # loss.                                                                     #
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-    pass
-
+    L[L > 0] = 1.0 # 设置为1，这样的话这一行的1加起来就可以成为n,即 -nXi的n
+#     print(L) # 对于500个样本计算
+    row_sum = np.sum(L, axis=1) # 对列求和得到每一样本的n值, 进而方便求解 -nXi
+#     print(row_sum)
+    L[np.arange(L.shape[0]), y] = -row_sum # 得到示性函数的数值，对于j != y_i 示性函数为1，对于 j==y_i 示性函数为 该行的其它非0值个数的和
+    # dW 500,10  X_T (3073, 500) L (500,10) W (3073, 10)
+    # 首先梯度公式：dL/dW_j = 1(scores - correct_scores + 1.0)xi dL/dW_yi = -∑(scores - correct_scores + 1.0)xi 
+    # 这个可以看成 一个示性矩阵 * x_i 示性矩阵在j != y_i,值为1， j==y_i 值为-n
+    dW = X.T@L / L.shape[0] + 2*reg*W # (1)X.T @ L (矩阵乘法)=(3073, 10) (2)除以L.shape[0](根据L=1/N∑Li) (3) 增加正则化项
+#     dW += 2*reg*W # (3073,10)
+    
+    
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     return loss, dW
