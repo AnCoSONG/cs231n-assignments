@@ -7,7 +7,8 @@
     - [x] Answer all inline questions. (If there are some problems, please submit issue and let me know!)
   - [x] SVM
     - [ ] Answer all inline questions.
-  - [ ] Softmax Classifier
+  - [x] Softmax Classifier
+    - [x] Answer all inline questions.
   - [ ] Two-layer Neural Network
   - [ ] High Level Representation of Image Features
 - [ ] Assignment2
