@@ -1,6 +1,6 @@
 # cs231n: assignments
 
-<a href='http://www.scu.edu.cn'><img src="https://img.shields.io/badge/University-SCU-blue?style=for-the-badge&logo=Julia" alt='www.scu.edu.cn'/></a>
+<a href='http://www.scu.edu.cn'><img src="https://img.shields.io/badge/University-SCU-blue?style=for-the-badge&logo=Julia" alt='www.scu.edu.cn'/></a><img src="https://img.shields.io/badge/Status-In%20Progress-important?style=for-the-badge&logo=Apple%20Podcasts">
 
 ## To-Do Lists
 
