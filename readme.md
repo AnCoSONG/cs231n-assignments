@@ -4,7 +4,7 @@
 
 - [ ] Assignment1
   - [x] KNN
-    - [ ] Answer all inline questions.
+    - [x] Answer all inline questions. (If there are some problems, please submit issue and let me know!)
   - [x] SVM
     - [ ] Answer all inline questions.
   - [ ] Softmax Classifier
