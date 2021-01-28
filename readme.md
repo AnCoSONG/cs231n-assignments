@@ -22,3 +22,6 @@
 - Vectorization implementation.
 - SVM workflow (s=f(x;w) => multi-svm loss => gradients descent)
 - SVM loss and gradients computation(I think it Hard)
+- [bias trick](https://hetpinvn.wordpress.com/2016/10/26/bias-trick/): y = Wx + b => y = Wx', x' = x.stack(np.ones(x.shape[0], 1)), as shown in the picture below.
+
+![Bias trick](https://tva1.sinaimg.cn/large/008eGmZEly1gn3gm4cp3bj318w0heaii.jpg)
