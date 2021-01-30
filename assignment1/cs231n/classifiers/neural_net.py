@@ -79,8 +79,20 @@ class TwoLayerNet(object):
         # shape (N, C).                                                             #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-        pass
+        
+        # bias trick, append 1-line vector in the dimention axis of X, stack bias into the dimension axis of W
+#         print('bias trick')
+#         print(X.shape,W1.shape, '=> ', end='')
+        X = np.hstack([X, np.ones((X.shape[0], 1))])
+        W1 = np.vstack([W1, b1])
+#         print(X.shape, W1.shape)
+        h1 = np.maximum(0, X@W1) # N, D+1 * D+1, H => N, H
+#         print(h1.shape, W2.shape, '=> ', end='')
+        h1 = np.hstack([h1, np.ones((h1.shape[0], 1))])
+        W2 = np.vstack([W2, b2])
+#         print(h1.shape, W2.shape)
+        scores = h1@W2
+                      
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -89,7 +101,7 @@ class TwoLayerNet(object):
             return scores
 
         # Compute the loss
-        loss = None
+        loss = 0.0
         #############################################################################
         # TODO: Finish the forward pass, and compute the loss. This should include  #
         # both the data loss and L2 regularization for W1 and W2. Store the result  #
@@ -98,7 +110,11 @@ class TwoLayerNet(object):
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        # scores 5,3 softmax l_i = -log(e^s_c/∑e^s_all)
+        exp_sum_scores = np.sum(np.exp(scores), axis=1)
+        exp_correct_scores = np.exp(scores[np.arange(scores.shape[0]), y])
+        loss += np.mean(-np.log(exp_correct_scores/exp_sum_scores)) # 1/n * ∑L_i
+        loss += reg * (np.sum(W1**2) + np.sum(W2**2))
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -110,9 +126,26 @@ class TwoLayerNet(object):
         # grads['W1'] should store the gradient on W1, and be a matrix of same size #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-        pass
-
+        
+        # HARD! dscores = dL/dLi * dLi/dP * dP/dscores (P(Y=k|X=X_i)=e^s/∑e^all))
+        dscores = np.exp(scores)
+        dscores /= exp_sum_scores.reshape(-1,1)
+        dscores[np.arange(dscores.shape[0]), y] -= 1.0
+        dscores /= N # dscores 5,3
+        # dW2 = h1.T * dscores 
+        # 可以总结为：某一层的梯度 = 本次的input.T @ 上游梯度
+        dW2 = h1.T @ dscores # (5,11)^T x (5,3) => (11,3) h1的第11行是为计算b2添加的1,后面需要剔除
+        dW2 += 2 * reg * W2 # Regularization
+        dh1 = dscores @ W2.T # 5,3 * (11,3)^T => 5,11  dscores * W2.T
+        dh1[h1<=0] = 0 # relu输出<=0的，梯度为0,没有贡献梯度
+        dW1 = X.T @ dh1[:, :-1] # dh1 (5,11) 第 11 列是 为了计算b2的梯度所加入的列(全为1)，需要剔除
+#         print(dW1.shape, W1.shape)
+        dW1 += 2 * reg * W1
+#         print(dW1.shape, W1.shape)
+        grads['W1'] = dW1[:-1, :]
+        grads['b1'] = dW1[-1, :]
+        grads['W2'] = dW2[:-1, :]
+        grads['b2'] = dW2[-1, :]
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         return loss, grads
@@ -155,8 +188,9 @@ class TwoLayerNet(object):
             # them in X_batch and y_batch respectively.                             #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-            pass
+            np.random.seed(it)
+            indices = np.random.choice(num_train, batch_size)
+            X_batch, y_batch = X[indices], y[indices]
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -171,8 +205,11 @@ class TwoLayerNet(object):
             # stored in the grads dictionary defined above.                         #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-            pass
+            
+            self.params['W1'] -= learning_rate * grads['W1']
+            self.params['W2'] -= learning_rate * grads['W2']
+            self.params['b1'] -= learning_rate * grads['b1']
+            self.params['b2'] -= learning_rate * grads['b2']
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -218,7 +255,10 @@ class TwoLayerNet(object):
         ###########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        # !Warn 千万别写错predict,不然调参半天没有效果还以为参数有问题。。。结果是预测代码忘记relu了。。。
+        h1 = np.maximum(0, X @ self.params['W1'] + self.params['b1'])
+        out = h1 @ self.params['W2'] + self.params['b2']
+        y_pred = np.argmax(out, axis=1)
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 

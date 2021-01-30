@@ -11,7 +11,9 @@
     - [ ] Answer all inline questions.
   - [x] Softmax Classifier
     - [x] Answer all inline questions.
-  - [ ] Two-layer Neural Network
+  - [x] Two-layer Neural Network
+    - [x] Answer all inline questions.
+    - [x] hyperparameters tuning: `54.7%` val acc, `54.3%` test acc.
   - [ ] High Level Representation of Image Features
 - [ ] Assignment2
 - [ ] Assignment3
@@ -28,3 +30,7 @@
 - [bias trick](https://hetpinvn.wordpress.com/2016/10/26/bias-trick/): y = Wx + b => y = Wx', x' = x.stack(np.ones(x.shape[0], 1)), as shown in the picture below.
 
 ![Bias trick](https://tva1.sinaimg.cn/large/008eGmZEly1gn3gm4cp3bj318w0heaii.jpg)
+
+* Handwritten 2 layer network.
+* Hyperparameters tuning process.
+* Weight visulization.
