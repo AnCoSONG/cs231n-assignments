@@ -4,7 +4,7 @@
 
 ## To-Do Lists
 
-- [ ] Assignment1
+- [x] Assignment1
   - [x] KNN
     - [x] Answer all inline questions. (If there are some problems, please submit issue and let me know!)
   - [x] SVM
@@ -14,7 +14,8 @@
   - [x] Two-layer Neural Network
     - [x] Answer all inline questions.
     - [x] hyperparameters tuning: `54.7%` val acc, `54.3%` test acc.
-  - [ ] High Level Representation of Image Features
+  - [x] High Level Representation of Image Features
+    - [x] Answer all inline questions.
 - [ ] Assignment2
 - [ ] Assignment3
 
