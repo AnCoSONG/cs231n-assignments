@@ -33,5 +33,11 @@
 ![Bias trick](https://tva1.sinaimg.cn/large/008eGmZEly1gn3gm4cp3bj318w0heaii.jpg)
 
 * Handwritten 2 layer network.
+
 * Hyperparameters tuning process.
+
 * Weight visulization.
+
+* Why analytic gradients sometimes not equal to the numerical gradients(Why gradient check some times failed)
+
+  check the answer:https://www.reddit.com/r/cs231n/comments/4edrtp/a1svm_inline_question1_need_help/![why_gradients_check_wrong_sometimes](https://tva1.sinaimg.cn/large/008eGmZEly1gn73070v4zj30m80go74l.jpg)
