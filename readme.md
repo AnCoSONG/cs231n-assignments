@@ -8,7 +8,7 @@
   - [x] KNN
     - [x] Answer all inline questions. (If there are some problems, please submit issue and let me know!)
   - [x] SVM
-    - [ ] Answer all inline questions.
+    - [x] Answer all inline questions. (Inline question 1)
   - [x] Softmax Classifier
     - [x] Answer all inline questions.
   - [x] Two-layer Neural Network
